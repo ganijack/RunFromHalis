@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Subway Surfers Clone</title>
+    <title>Run From Halis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,7 +16,7 @@
 
         body {
             overflow: hidden;
-            font-family: 'Arial Black', Arial, sans-serif;
+            font-family: 'Outfit', sans-serif;
             background: #000;
         }
 
@@ -39,43 +40,46 @@
             pointer-events: auto;
         }
 
-        /* HUD Elements */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== HUD ===== */
         #hud {
             position: absolute;
             top: 20px;
             width: 100%;
-            color: white;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, .8);
         }
 
         #score-display {
             position: absolute;
             top: 20px;
             right: 20px;
-            font-size: 32px;
-            font-weight: bold;
-            text-align: right;
+            font-size: 28px;
+            font-weight: 700;
         }
 
         #coin-counter {
             position: absolute;
-            top: 65px;
+            top: 58px;
             right: 20px;
-            font-size: 24px;
+            font-size: 20px;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            gap: 8px;
+            gap: 6px;
         }
 
         .coin-icon {
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
+            width: 24px;
+            height: 24px;
+            background: radial-gradient(circle, #FFD700, #FFA500);
             border-radius: 50%;
             display: inline-block;
-            border: 3px solid #FF8C00;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            border: 2px solid #FF8C00;
+            box-shadow: 0 0 8px rgba(255, 215, 0, .6);
+            flex-shrink: 0;
         }
 
         #distance-counter {
@@ -83,56 +87,229 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 24px;
+            font-size: 20px;
         }
 
         #pause-button {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 3px solid white;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, .2);
+            border: 2px solid #fff;
             border-radius: 10px;
-            color: white;
-            font-size: 24px;
+            color: #fff;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* Main Menu */
+        /* ===== MAIN MENU ===== */
         #main-menu {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(180deg, rgba(10, 10, 46, 0.85) 0%, rgba(26, 26, 78, 0.8) 50%, rgba(45, 21, 48, 0.85) 100%);
-            backdrop-filter: blur(4px);
+            background: linear-gradient(180deg, rgba(10, 10, 46, .92), rgba(26, 26, 78, .85) 50%, rgba(45, 21, 48, .92));
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        /* Top Currency Bar */
+        .currency-bar {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            padding: 12px 16px 8px;
+            z-index: 10;
+        }
+
+        .currency-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 0, 0, .4);
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 20px;
+            padding: 4px 12px 4px 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .currency-item .cur-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .cur-coins {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .cur-keys {
+            background: linear-gradient(135deg, #FF6B9D, #C44569);
+        }
+
+        .cur-tokens {
+            background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+        }
+
+        /* Settings & Mission Buttons */
+        .menu-top-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 16px;
+        }
+
+        .top-icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, .25);
+            background: rgba(0, 0, 0, .35);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .2s, background .2s;
+        }
+
+        .top-icon-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, .15);
+        }
+
+        .top-icon-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #FF3B30;
+            border-radius: 50%;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Event Banner */
+        .event-banner {
+            margin: 8px 16px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, .15), rgba(78, 205, 196, .15));
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 16px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: transform .2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-banner:hover {
+            transform: scale(1.02);
+        }
+
+        .event-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(255, 215, 0, .08), transparent 30%);
+            animation: bannerSpin 8s linear infinite;
+        }
+
+        @keyframes bannerSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .event-tag {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #FFD700;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .event-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            position: relative;
+        }
+
+        .event-subtitle {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .6);
+            margin-top: 2px;
+            position: relative;
+        }
+
+        .event-timer {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: right;
+        }
+
+        .event-timer .timer-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #FF6B6B;
+        }
+
+        .event-timer .timer-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, .5);
+        }
+
+        /* Center Content */
+        .menu-center {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 100;
+            gap: 10px;
+            padding: 10px;
         }
 
         #game-logo {
-            font-size: 64px;
-            font-weight: bold;
+            font-size: clamp(36px, 10vw, 64px);
+            font-weight: 900;
             background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #FFE66D, #95E1D3);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradientShift 3s ease infinite;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
-            margin-bottom: 50px;
+            animation: gradShift 3s ease infinite;
+            text-align: center;
+            line-height: 1.1;
         }
 
-        @keyframes gradientShift {
+        @keyframes gradShift {
 
             0%,
             100% {
@@ -144,22 +321,30 @@
             }
         }
 
+        #high-score-display {
+            font-size: 16px;
+            color: rgba(255, 255, 255, .6);
+            font-weight: 600;
+        }
+
         #play-button {
-            padding: 20px 60px;
-            font-size: 32px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
-            color: white;
-            border: 4px solid white;
+            padding: 16px 56px;
+            font-size: clamp(22px, 6vw, 32px);
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: #fff;
+            border: 3px solid rgba(255, 255, 255, .8);
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 25px rgba(46, 204, 113, .5);
             animation: pulse 2s ease infinite;
-            transition: transform 0.2s;
+            transition: transform .15s;
+            letter-spacing: 1px;
         }
 
         #play-button:hover {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
         @keyframes pulse {
@@ -167,28 +352,742 @@
             0%,
             100% {
                 transform: scale(1);
+                box-shadow: 0 6px 25px rgba(46, 204, 113, .5);
             }
 
             50% {
-                transform: scale(1.05);
+                transform: scale(1.04);
+                box-shadow: 0 8px 35px rgba(46, 204, 113, .7);
             }
         }
 
-        #high-score-display {
-            position: absolute;
-            top: 30px;
-            font-size: 24px;
-            color: #E0E0E0;
+        /* Action Buttons Row */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
         }
 
-        /* Game Over Screen */
+        .action-btn {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-radius: 14px;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-missions {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            box-shadow: 0 4px 15px rgba(230, 126, 34, .4);
+        }
+
+        .btn-daily {
+            background: linear-gradient(135deg, #9B59B6, #8E44AD);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, .4);
+        }
+
+        .btn-rewards {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, .4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 12px 14px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, .7), transparent);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 14px;
+            transition: all .25s;
+            min-width: 70px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, .1);
+        }
+
+        .nav-item.active .nav-label {
+            color: #FFD700;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .5));
+            transition: transform .2s;
+        }
+
+        .nav-item:hover .nav-icon {
+            transform: scale(1.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .7);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        /* ===== MODAL OVERLAY ===== */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 200;
+            animation: fadeIn .25s ease;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-panel {
+            background: linear-gradient(145deg, #1a1a2e, #16213e 50%, #0f3460);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 24px 24px 0 0;
+            padding: 24px 20px 30px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, .5);
+            animation: slideUp .35s cubic-bezier(.16, 1, .3, 1);
+        }
+
+        .modal-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-panel::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .15);
+            border-radius: 4px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .6);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 76, 60, .3);
+            color: #fff;
+        }
+
+        /* Leaderboard */
+        .lb-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .lb-tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .5);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .2s;
+            background: transparent;
+        }
+
+        .lb-tab.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e;
+            border-color: transparent;
+        }
+
+        .lb-entry {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .06);
+            transition: transform .2s;
+        }
+
+        .lb-entry:hover {
+            transform: translateX(4px);
+        }
+
+        .lb-entry.me {
+            background: rgba(255, 215, 0, .08);
+            border-color: rgba(255, 215, 0, .2);
+        }
+
+        .lb-rank {
+            font-size: 18px;
+            font-weight: 800;
+            color: #FFD700;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .lb-rank.silver {
+            color: #C0C0C0;
+        }
+
+        .lb-rank.bronze {
+            color: #CD7F32;
+        }
+
+        .lb-rank.normal {
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .lb-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .lb-info {
+            flex: 1;
+        }
+
+        .lb-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .lb-score {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .4);
+        }
+
+        .lb-pts {
+            font-size: 16px;
+            font-weight: 800;
+            color: #4ECDC4;
+        }
+
+        /* Character / Me */
+        .char-preview {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, .03);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .char-avatar-big {
+            font-size: 64px;
+            margin-bottom: 8px;
+        }
+
+        .char-name-big {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .char-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 16px 0 10px;
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .char-card {
+            aspect-ratio: 1;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .05);
+            border: 2px solid rgba(255, 255, 255, .1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: 28px;
+        }
+
+        .char-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 215, 0, .4);
+        }
+
+        .char-card.selected {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, .1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, .2);
+        }
+
+        .char-card .card-label {
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 4px;
+        }
+
+        .char-card .card-lock {
+            font-size: 9px;
+            color: #FF6B6B;
+        }
+
+        /* Shop */
+        .shop-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .shop-tab {
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .5);
+            cursor: pointer;
+            background: transparent;
+            transition: all .2s;
+        }
+
+        .shop-tab.active {
+            background: linear-gradient(135deg, #9B59B6, #8E44AD);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all .2s;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 215, 0, .3);
+        }
+
+        .shop-item-icon {
+            font-size: 32px;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, .05);
+            border-radius: 12px;
+        }
+
+        .shop-item-info {
+            flex: 1;
+        }
+
+        .shop-item-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .shop-item-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .4);
+            margin-top: 2px;
+        }
+
+        .shop-item-owned {
+            font-size: 10px;
+            color: #2ECC71;
+            margin-top: 2px;
+        }
+
+        .buy-btn {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform .2s;
+            white-space: nowrap;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.06);
+        }
+
+        .buy-btn:disabled {
+            background: linear-gradient(135deg, #444, #333);
+            color: #777;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .buy-btn .coin-icon {
+            width: 14px;
+            height: 14px;
+            border-width: 1.5px;
+        }
+
+        @keyframes purchaseFlash {
+            0% {
+                background-color: rgba(46, 204, 113, .25);
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+
+        .purchase-flash {
+            animation: purchaseFlash .5s ease;
+        }
+
+        /* Rewards */
+        .reward-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .reward-day {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: rgba(255, 255, 255, .5);
+            gap: 2px;
+            transition: all .2s;
+            cursor: default;
+        }
+
+        .reward-day .rw-icon {
+            font-size: 20px;
+        }
+
+        .reward-day.claimed {
+            background: rgba(46, 204, 113, .15);
+            border-color: rgba(46, 204, 113, .3);
+        }
+
+        .reward-day.claimed .rw-icon::after {
+            content: '✓';
+            position: absolute;
+            font-size: 10px;
+            color: #2ECC71;
+        }
+
+        .reward-day.today {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, .1);
+            animation: todayPulse 2s ease infinite;
+            cursor: pointer;
+        }
+
+        @keyframes todayPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 215, 0, .3);
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(255, 215, 0, 0);
+            }
+        }
+
+        .reward-day.locked {
+            opacity: .4;
+        }
+
+        .mystery-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(155, 89, 182, .1), rgba(142, 68, 173, .05));
+            border: 1px dashed rgba(155, 89, 182, .3);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: transform .2s;
+        }
+
+        .mystery-box:hover {
+            transform: scale(1.03);
+        }
+
+        .mystery-box .box-icon {
+            font-size: 48px;
+            animation: boxFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes boxFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .mystery-box .box-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 8px;
+        }
+
+        .mystery-box .box-sub {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .4);
+        }
+
+        /* Missions */
+        .mission-card {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+        }
+
+        .mission-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .mission-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .mission-reward {
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFD700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .mission-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .4);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #2ECC71, #27AE60);
+            transition: width .5s ease;
+        }
+
+        .progress-fill.gold {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+        }
+
+        .mission-progress-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .3);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* Settings */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .setting-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setting-label .s-icon {
+            font-size: 18px;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 26px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, .15);
+            cursor: pointer;
+            position: relative;
+            transition: background .3s;
+            border: none;
+        }
+
+        .toggle.on {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+        }
+
+        .toggle .toggle-knob {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left .3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .3);
+        }
+
+        .toggle.on .toggle-knob {
+            left: 24px;
+        }
+
+        .select-wrap {
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 8px;
+            padding: 6px 10px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+        }
+
+        .select-wrap option {
+            background: #1a1a2e;
+        }
+
+        /* Game Over */
         #game-over-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, .8);
             display: none;
             align-items: center;
             justify-content: center;
@@ -196,31 +1095,33 @@
         }
 
         #game-over-panel {
-            background: white;
-            padding: 40px;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            padding: 30px;
             border-radius: 20px;
             text-align: center;
-            max-width: 400px;
+            max-width: 380px;
             width: 90%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .5);
+            border: 1px solid rgba(255, 255, 255, .1);
         }
 
         #game-over-title {
-            font-size: 48px;
+            font-size: 36px;
+            font-weight: 900;
             color: #E74C3C;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .stat-row {
             display: flex;
             justify-content: space-between;
-            margin: 15px 0;
-            font-size: 20px;
-            color: #2C3E50;
+            margin: 12px 0;
+            font-size: 16px;
+            color: rgba(255, 255, 255, .8);
         }
 
         .stat-label {
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .new-record {
@@ -236,19 +1137,20 @@
             }
 
             50% {
-                opacity: 0.5;
+                opacity: .5;
             }
         }
 
         .menu-button {
-            padding: 15px 40px;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px;
+            padding: 12px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            margin: 8px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform .2s;
         }
 
         .menu-button:hover {
@@ -256,23 +1158,23 @@
         }
 
         #play-again-button {
-            background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%);
-            color: white;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            color: #fff;
         }
 
         #menu-button {
-            background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
-            color: white;
+            background: linear-gradient(135deg, #95A5A6, #7F8C8D);
+            color: #fff;
         }
 
-        /* Pause Screen */
+        /* Pause */
         #pause-screen {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, .8);
             display: none;
             align-items: center;
             justify-content: center;
@@ -280,258 +1182,494 @@
         }
 
         #pause-title {
-            font-size: 64px;
-            color: white;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+            font-size: 48px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, .5);
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Mobile instructions */
         #touch-instructions {
             position: absolute;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            font-size: 16px;
-            text-align: center;
-            opacity: 0.8;
-        }
-
-        @media (min-width: 768px) {
-            #touch-instructions {
-                display: none;
-            }
-        }
-
-        /* Store Button on Main Menu */
-        #store-button {
-            padding: 14px 50px;
-            font-size: 24px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
-            color: white;
-            border: 3px solid rgba(255, 255, 255, 0.6);
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(142, 68, 173, 0.4);
-            margin-top: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        #store-button:hover {
-            transform: scale(1.07);
-            box-shadow: 0 8px 30px rgba(142, 68, 173, 0.6);
-        }
-
-        /* Menu Coins Display */
-        #menu-coins-display {
-            position: absolute;
-            top: 70px;
-            font-size: 22px;
-            color: #E0E0E0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #menu-coins-display .coin-icon {
-            width: 26px;
-            height: 26px;
-        }
-
-        /* Store Overlay */
-        #store-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        #store-panel {
-            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 30px;
-            max-width: 420px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-            animation: slideUp 0.4s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        #store-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        #store-title {
-            font-size: 32px;
-            background: linear-gradient(90deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        #store-coins {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 20px;
-            color: #FFD700;
-        }
-
-        #store-close {
-            position: absolute;
-            top: 12px;
-            right: 18px;
-            font-size: 28px;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            background: none;
-            border: none;
-            transition: color 0.2s;
-        }
-
-        #store-close:hover {
             color: #fff;
-        }
-
-        .store-item {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .store-item:hover {
-            transform: translateY(-3px);
-            border-color: rgba(255, 215, 0, 0.4);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.1);
-        }
-
-        .item-icon {
-            font-size: 42px;
-            min-width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-        }
-
-        .item-info {
-            flex: 1;
-        }
-
-        .item-name {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .item-desc {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 8px;
-        }
-
-        .item-owned {
-            font-size: 11px;
-            color: #2ECC71;
-        }
-
-        .buy-btn {
-            padding: 10px 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, .8);
             font-size: 14px;
-            font-weight: bold;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
+            text-align: center;
+            opacity: .7;
+        }
+
+        /* ===== Leaderboard Entries ===== */
+        .lb-entry {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .04);
+            margin-bottom: 8px;
+            transition: background .2s;
+        }
+
+        .lb-entry:hover {
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .lb-entry.me {
+            background: linear-gradient(135deg, rgba(46, 204, 113, .15), rgba(39, 174, 96, .1));
+            border: 1px solid rgba(46, 204, 113, .3);
+        }
+
+        .lb-rank {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
             background: linear-gradient(135deg, #FFD700, #FFA500);
             color: #1a1a2e;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+
+        .lb-rank.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+        }
+
+        .lb-rank.bronze {
+            background: linear-gradient(135deg, #CD7F32, #A0522D);
+            color: #fff;
+        }
+
+        .lb-rank.normal {
+            background: rgba(255, 255, 255, .1);
+            color: rgba(255, 255, 255, .5);
+        }
+
+        .lb-avatar {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .lb-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lb-name {
+            font-weight: 700;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lb-score {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .4);
+            margin-top: 2px;
+        }
+
+        .lb-pts {
+            font-weight: 800;
+            font-size: 16px;
+            color: #FFD700;
             white-space: nowrap;
         }
 
-        .buy-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        /* ===== Character Cards ===== */
+        .char-preview {
+            text-align: center;
+            padding: 20px 0 10px;
+        }
+
+        .char-avatar-big {
+            font-size: 64px;
+            margin-bottom: 6px;
+        }
+
+        .char-name-big {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .char-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, .5);
+            margin: 16px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .char-card {
+            background: rgba(255, 255, 255, .06);
+            border: 2px solid rgba(255, 255, 255, .1);
+            border-radius: 14px;
+            padding: 14px 8px 10px;
+            text-align: center;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all .2s;
+            position: relative;
+        }
+
+        .char-card:hover {
+            background: rgba(255, 255, 255, .1);
+            transform: translateY(-2px);
+        }
+
+        .char-card.selected {
+            border-color: #2ECC71;
+            background: rgba(46, 204, 113, .1);
+            box-shadow: 0 0 12px rgba(46, 204, 113, .3);
+        }
+
+        .char-card.locked {
+            opacity: .5;
+            cursor: default;
+        }
+
+        .char-card.locked:hover {
+            transform: none;
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .card-label {
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 6px;
+            color: rgba(255, 255, 255, .7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-lock {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 14px;
+        }
+
+        /* ===== Shop Items ===== */
+        .shop-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            margin-bottom: 10px;
+            transition: all .3s;
+        }
+
+        .shop-item:hover {
+            background: rgba(255, 255, 255, .08);
+            transform: translateY(-1px);
+        }
+
+        .shop-item-icon {
+            font-size: 36px;
+            flex-shrink: 0;
+            width: 50px;
+            text-align: center;
+        }
+
+        .shop-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .shop-item-name {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .shop-item-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .45);
+            margin-top: 2px;
+        }
+
+        .shop-item-owned {
+            font-size: 11px;
+            color: #2ECC71;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .buy-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #1a1a2e;
+            font-weight: 800;
+            font-size: 14px;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all .2s;
+            flex-shrink: 0;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(255, 215, 0, .4);
         }
 
         .buy-btn:disabled {
-            background: linear-gradient(135deg, #555, #444);
-            color: #999;
+            opacity: .4;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
 
         .buy-btn .coin-icon {
             width: 16px;
             height: 16px;
-            border-width: 2px;
         }
 
+        /* ===== Reward Grid ===== */
+        .reward-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .reward-day {
+            text-align: center;
+            padding: 12px 4px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, .05);
+            border: 2px solid rgba(255, 255, 255, .08);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .rw-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .reward-day.claimed {
+            background: rgba(46, 204, 113, .15);
+            border-color: rgba(46, 204, 113, .3);
+            opacity: .7;
+        }
+
+        .reward-day.claimed .rw-icon::after {
+            content: ' ✅';
+            font-size: 12px;
+        }
+
+        .reward-day.today {
+            background: rgba(255, 215, 0, .12);
+            border-color: #FFD700;
+            animation: pulse 1.5s ease infinite;
+            box-shadow: 0 0 12px rgba(255, 215, 0, .3);
+        }
+
+        .reward-day.locked {
+            opacity: .35;
+            cursor: default;
+        }
+
+        /* ===== Mystery Box ===== */
+        .mystery-box {
+            padding: 24px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(108, 92, 231, .2), rgba(162, 155, 254, .1));
+            border: 2px solid rgba(108, 92, 231, .3);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .mystery-box:hover {
+            transform: scale(1.02);
+            border-color: rgba(108, 92, 231, .6);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, .25);
+        }
+
+        .box-icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .box-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: #A29BFE;
+        }
+
+        .box-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .4);
+            margin-top: 4px;
+        }
+
+        /* ===== Mission Cards ===== */
+        .mission-card {
+            padding: 16px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .08);
+            border-radius: 16px;
+            margin-bottom: 10px;
+        }
+
+        .mission-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .mission-title {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .mission-reward {
+            color: #FFD700;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .mission-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, .45);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ECC71, #27AE60);
+            border-radius: 4px;
+            transition: width .4s ease;
+        }
+
+        .progress-fill.gold {
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+        }
+
+        .mission-progress-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, .5);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        /* ===== Purchase Flash ===== */
         @keyframes purchaseFlash {
             0% {
-                background-color: rgba(46, 204, 113, 0.3);
+                box-shadow: 0 0 0 rgba(46, 204, 113, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(46, 204, 113, .5)
             }
 
             100% {
-                background-color: transparent;
+                box-shadow: 0 0 0 rgba(46, 204, 113, 0)
             }
         }
 
         .purchase-flash {
-            animation: purchaseFlash 0.6s ease;
+            animation: purchaseFlash .5s ease;
+        }
+
+        /* ===== Pulse animation ===== */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1)
+            }
+
+            50% {
+                transform: scale(1.05)
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width:380px) {
+            .currency-item {
+                padding: 3px 8px 3px 4px;
+                font-size: 11px;
+                gap: 3px;
+            }
+
+            .currency-item .cur-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 10px;
+            }
+
+            .event-banner {
+                margin: 6px 10px;
+                padding: 10px 12px;
+            }
+
+            .event-title {
+                font-size: 16px;
+            }
+
+            .char-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .reward-grid {
+                gap: 4px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+                min-width: 56px;
+            }
+        }
+
+        @media (min-width:768px) {
+            #touch-instructions {
+                display: none;
+            }
+
+            .modal-panel {
+                border-radius: 24px;
+                max-height: 80vh;
+                margin-bottom: 20px;
+            }
+
+            .currency-bar {
+                gap: 20px;
+            }
+
+            .bottom-nav {
+                max-width: 480px;
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
@@ -542,38 +1680,162 @@
     <div id="ui-container">
         <!-- Main Menu -->
         <div id="main-menu" class="ui-element">
-            <div id="high-score-display">HIGH SCORE: <span id="menu-high-score">0</span></div>
-            <div id="menu-coins-display"><span class="coin-icon"></span> <span id="menu-total-coins">500</span></div>
-            <div id="game-logo">RUN FROM HALIS</div>
-            <button id="play-button" class="ui-element">TAP TO PLAY</button>
-            <button id="store-button" class="ui-element">🛒 STORE</button>
+            <!-- Currency Bar -->
+            <div class="currency-bar">
+                <div class="currency-item"><span class="cur-icon cur-coins">🪙</span><span id="cur-coins">500</span>
+                </div>
+                <div class="currency-item"><span class="cur-icon cur-keys">🔑</span><span id="cur-keys">3</span></div>
+                <div class="currency-item"><span class="cur-icon cur-tokens">⭐</span><span id="cur-tokens">120</span>
+                </div>
+            </div>
+            <!-- Top Row -->
+            <div class="menu-top-row">
+                <button class="top-icon-btn ui-element" id="btn-settings" style="position:relative">⚙️</button>
+                <button class="top-icon-btn ui-element" id="btn-notif" style="position:relative">🔔<span
+                        class="badge">!</span></button>
+            </div>
+            <!-- Event Banner -->
+            <div class="event-banner ui-element" id="event-banner">
+                <div class="event-tag">🗺️ WORLD TOUR</div>
+                <div class="event-title">Winter Holiday</div>
+                <div class="event-subtitle">New map • Limited rewards • Special missions</div>
+                <div class="event-timer">
+                    <div class="timer-val">6d 12h</div>
+                    <div class="timer-label">remaining</div>
+                </div>
+            </div>
+            <!-- Center -->
+            <div class="menu-center">
+                <div id="game-logo">RUN FROM<br>HALIS</div>
+                <div id="high-score-display">🏆 HIGH SCORE: <span id="menu-high-score">0</span></div>
+                <button id="play-button" class="ui-element">TAP TO PLAY</button>
+                <div class="action-row">
+                    <button class="action-btn btn-missions ui-element" id="btn-missions">📋 Missions</button>
+                    <button class="action-btn btn-daily ui-element" id="btn-daily">📅 Daily</button>
+                    <button class="action-btn btn-rewards ui-element" id="btn-rewards">🎁 Rewards</button>
+                </div>
+            </div>
+            <!-- Bottom Nav -->
+            <div class="bottom-nav">
+                <div class="nav-item ui-element" id="nav-leaderboard"><span class="nav-icon">🏆</span><span
+                        class="nav-label">Top Run</span></div>
+                <div class="nav-item ui-element" id="nav-character"><span class="nav-icon">🧍</span><span
+                        class="nav-label">Me</span></div>
+                <div class="nav-item ui-element" id="nav-shop"><span class="nav-icon">🛍️</span><span
+                        class="nav-label">Shop</span></div>
+            </div>
         </div>
 
-        <!-- Store Overlay -->
-        <div id="store-overlay" class="ui-element">
-            <div id="store-panel" style="position:relative;">
-                <button id="store-close" class="ui-element">✕</button>
-                <div id="store-header">
-                    <div id="store-title">SHOP</div>
-                    <div id="store-coins"><span class="coin-icon"></span> <span id="store-coin-count">500</span></div>
+        <!-- Leaderboard Modal -->
+        <div class="modal-overlay ui-element" id="modal-leaderboard">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">🏆 TOP RUN</div><button class="modal-close ui-element"
+                        data-close="modal-leaderboard">✕</button>
                 </div>
-                <div class="store-item" id="item-board">
-                    <div class="item-icon">🛹</div>
-                    <div class="item-info">
-                        <div class="item-name">Hoverboard</div>
-                        <div class="item-desc">Ride in style! Protects from one crash.</div>
-                        <div class="item-owned" id="board-owned">Owned: 0</div>
-                    </div>
-                    <button class="buy-btn ui-element" id="buy-board"><span class="coin-icon"></span> 100</button>
+                <div class="lb-tabs"><button class="lb-tab active ui-element" data-lb="weekly">Weekly</button><button
+                        class="lb-tab ui-element" data-lb="alltime">All Time</button><button class="lb-tab ui-element"
+                        data-lb="friends">Friends</button></div>
+                <div id="lb-list"></div>
+            </div>
+        </div>
+
+        <!-- Character Modal -->
+        <div class="modal-overlay ui-element" id="modal-character">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">🧍 CHARACTER</div><button class="modal-close ui-element"
+                        data-close="modal-character">✕</button>
                 </div>
-                <div class="store-item" id="item-magnet">
-                    <div class="item-icon">🧲</div>
-                    <div class="item-info">
-                        <div class="item-name">Coin Magnet</div>
-                        <div class="item-desc">Attract nearby coins for 10 seconds!</div>
-                        <div class="item-owned" id="magnet-owned">Owned: 0</div>
+                <div class="char-preview">
+                    <div class="char-avatar-big" id="char-preview-icon">🏃</div>
+                    <div class="char-name-big" id="char-preview-name">Default Runner</div>
+                </div>
+                <div class="char-section-title">Characters</div>
+                <div class="char-grid" id="char-grid"></div>
+                <div class="char-section-title">Hoverboards</div>
+                <div class="char-grid" id="board-grid"></div>
+            </div>
+        </div>
+
+        <!-- Shop Modal -->
+        <div class="modal-overlay ui-element" id="modal-shop">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">🛍️ SHOP</div><button class="modal-close ui-element"
+                        data-close="modal-shop">✕</button>
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:16px;font-weight:700;color:#FFD700">
+                        <span class="coin-icon"></span><span id="shop-coin-count">500</span>
                     </div>
-                    <button class="buy-btn ui-element" id="buy-magnet"><span class="coin-icon"></span> 50</button>
+                </div>
+                <div class="shop-tabs"><button class="shop-tab active ui-element"
+                        data-shop="powerups">Power-ups</button><button class="shop-tab ui-element"
+                        data-shop="mystery">Mystery</button></div>
+                <div id="shop-items"></div>
+            </div>
+        </div>
+
+        <!-- Rewards Modal -->
+        <div class="modal-overlay ui-element" id="modal-rewards">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">🎁 DAILY REWARDS</div><button class="modal-close ui-element"
+                        data-close="modal-rewards">✕</button>
+                </div>
+                <div class="reward-grid" id="reward-grid"></div>
+                <div class="mystery-box ui-element" id="free-box">
+                    <div class="box-icon">📦</div>
+                    <div class="box-text">Free Mystery Box</div>
+                    <div class="box-sub">Tap to open!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Missions Modal -->
+        <div class="modal-overlay ui-element" id="modal-missions">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">📋 DAILY MISSIONS</div><button class="modal-close ui-element"
+                        data-close="modal-missions">✕</button>
+                </div>
+                <div id="mission-list"></div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal-overlay ui-element" id="modal-settings">
+            <div class="modal-panel">
+                <div class="modal-header">
+                    <div class="modal-title">⚙️ SETTINGS</div><button class="modal-close ui-element"
+                        data-close="modal-settings">✕</button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label"><span class="s-icon">🔊</span>Sound</div><button
+                        class="toggle on ui-element" id="toggle-sound">
+                        <div class="toggle-knob"></div>
+                    </button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label"><span class="s-icon">🎵</span>Music</div><button
+                        class="toggle on ui-element" id="toggle-music">
+                        <div class="toggle-knob"></div>
+                    </button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label"><span class="s-icon">📳</span>Vibration</div><button
+                        class="toggle on ui-element" id="toggle-vibration">
+                        <div class="toggle-knob"></div>
+                    </button>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-label"><span class="s-icon">🌐</span>Language</div><select
+                        class="select-wrap ui-element" id="sel-language">
+                        <option>English</option>
+                        <option>Indonesia</option>
+                        <option>日本語</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -1865,97 +3127,238 @@
             }
         }
 
-        // ===== SECTION 9: STORE MANAGER =====
-        class StoreManager {
+        // ===== SECTION 9: MENU UI (replaces StoreManager + UIManager) =====
+        class MenuUI {
             constructor(game) {
                 this.game = game;
+                this.characters = [
+                    { id: 'runner', icon: '🏃', name: 'Default Runner', unlocked: true },
+                    { id: 'skater', icon: '🛹', name: 'Skater Boy', unlocked: true },
+                    { id: 'ninja', icon: '🥷', name: 'Shadow Ninja', unlocked: false },
+                    { id: 'astro', icon: '🧑‍🚀', name: 'Astronaut', unlocked: false },
+                    { id: 'robot', icon: '🤖', name: 'Robo Runner', unlocked: false },
+                    { id: 'wizard', icon: '🧙', name: 'Wizard', unlocked: false },
+                    { id: 'pirate', icon: '🏴‍☠️', name: 'Pirate', unlocked: false },
+                    { id: 'alien', icon: '👽', name: 'Alien', unlocked: false }
+                ];
+                this.boards = [
+                    { id: 'classic', icon: '🛹', name: 'Classic', unlocked: true },
+                    { id: 'flame', icon: '🔥', name: 'Flame Board', unlocked: true },
+                    { id: 'ice', icon: '❄️', name: 'Ice Board', unlocked: false },
+                    { id: 'neon', icon: '💜', name: 'Neon Board', unlocked: false }
+                ];
+                this.shopItems = [
+                    { id: 'board', icon: '🛹', name: 'Hoverboard', desc: 'Protects from one crash.', cost: 100, key: 'board' },
+                    { id: 'magnet', icon: '🧲', name: 'Coin Magnet', desc: 'Attract coins for 10s!', cost: 50, key: 'magnet' },
+                    { id: 'x2', icon: '✖️2️⃣', name: 'Score Boost', desc: 'Double score for 30s.', cost: 150, key: 'x2' },
+                    { id: 'jetpack', icon: '🚀', name: 'Jetpack', desc: 'Fly over obstacles!', cost: 200, key: 'jetpack' }
+                ];
+                this.missions = [
+                    { id: 'm1', title: 'Coin Collector', desc: 'Collect 50 coins in one run', target: 50, key: 'missionCoins', reward: 100, icon: '🪙' },
+                    { id: 'm2', title: 'Distance Runner', desc: 'Run 500 meters', target: 500, key: 'missionDist', reward: 150, icon: '📏' },
+                    { id: 'm3', title: 'High Scorer', desc: 'Score 1000 points', target: 1000, key: 'missionScore', reward: 200, icon: '⭐' }
+                ];
+                this.selectedChar = localStorage.getItem('rfhChar') || 'runner';
+                this.selectedBoard = localStorage.getItem('rfhBoard') || 'classic';
+                this.lbNames = ['ShadowX', 'NitroKid', 'SpeedQueen', 'BlazeMaster', 'RunnerJay', 'TurboMax', 'FlashDash', 'CosmicRun', 'PixelPunk', 'NeonWolf'];
                 this.setupEventListeners();
-                this.updateStoreUI();
+                this.populateAll();
             }
 
             setupEventListeners() {
-                document.getElementById('store-button').addEventListener('click', () => this.open());
-                document.getElementById('store-close').addEventListener('click', () => this.close());
-                document.getElementById('buy-board').addEventListener('click', () => this.buyItem('board', 100));
-                document.getElementById('buy-magnet').addEventListener('click', () => this.buyItem('magnet', 50));
-
-                // Close on overlay background click
-                document.getElementById('store-overlay').addEventListener('click', (e) => {
-                    if (e.target.id === 'store-overlay') this.close();
+                const $ = id => document.getElementById(id);
+                $('play-button').addEventListener('click', () => this.game.startGame());
+                $('pause-button').addEventListener('click', () => this.game.togglePause());
+                $('play-again-button').addEventListener('click', () => this.game.startGame());
+                $('menu-button').addEventListener('click', () => this.game.showMainMenu());
+                // Bottom nav
+                $('nav-leaderboard').addEventListener('click', () => this.openModal('modal-leaderboard'));
+                $('nav-character').addEventListener('click', () => this.openModal('modal-character'));
+                $('nav-shop').addEventListener('click', () => { this.renderShop(); this.openModal('modal-shop'); });
+                // Action buttons
+                $('btn-missions').addEventListener('click', () => { this.renderMissions(); this.openModal('modal-missions'); });
+                $('btn-daily').addEventListener('click', () => { this.renderMissions(); this.openModal('modal-missions'); });
+                $('btn-rewards').addEventListener('click', () => { this.renderRewards(); this.openModal('modal-rewards'); });
+                $('btn-settings').addEventListener('click', () => this.openModal('modal-settings'));
+                $('btn-notif').addEventListener('click', () => { this.renderRewards(); this.openModal('modal-rewards'); });
+                // Close buttons
+                document.querySelectorAll('.modal-close').forEach(btn => {
+                    btn.addEventListener('click', () => this.closeModal(btn.dataset.close));
+                });
+                // Close on overlay click
+                document.querySelectorAll('.modal-overlay').forEach(ov => {
+                    ov.addEventListener('click', e => { if (e.target === ov) this.closeModal(ov.id); });
+                });
+                // Leaderboard tabs
+                document.querySelectorAll('.lb-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.renderLeaderboard();
+                    });
+                });
+                // Shop tabs
+                document.querySelectorAll('.shop-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.shop-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        this.renderShop();
+                    });
+                });
+                // Settings toggles
+                document.querySelectorAll('.toggle').forEach(tog => {
+                    tog.addEventListener('click', () => tog.classList.toggle('on'));
+                });
+                // Free mystery box
+                $('free-box').addEventListener('click', () => {
+                    const bonus = [10, 25, 50, 100][Math.floor(Math.random() * 4)];
+                    this.game.gameState.totalCoins += bonus;
+                    this.game.gameState.saveTotalCoins();
+                    this.updateCurrencyDisplay();
+                    $('free-box').querySelector('.box-text').textContent = `+${bonus} coins!`;
+                    setTimeout(() => { $('free-box').querySelector('.box-text').textContent = 'Free Mystery Box'; }, 2000);
                 });
             }
 
-            open() {
-                this.updateStoreUI();
-                document.getElementById('store-overlay').style.display = 'flex';
+            openModal(id) { document.getElementById(id).classList.add('open'); }
+            closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+            populateAll() {
+                this.renderLeaderboard();
+                this.renderCharacters();
+                this.renderShop();
+                this.renderRewards();
+                this.renderMissions();
             }
 
-            close() {
-                document.getElementById('store-overlay').style.display = 'none';
-            }
-
-            buyItem(itemId, cost) {
-                const success = this.game.gameState.buyItem(itemId, cost);
-                if (success) {
-                    this.updateStoreUI();
-                    // Flash effect
-                    const el = document.getElementById('item-' + itemId);
-                    el.classList.remove('purchase-flash');
-                    void el.offsetWidth; // reflow
-                    el.classList.add('purchase-flash');
-                }
-            }
-
-            updateStoreUI() {
+            updateCurrencyDisplay() {
                 const gs = this.game.gameState;
-                document.getElementById('store-coin-count').textContent = gs.totalCoins.toLocaleString();
-                document.getElementById('menu-total-coins').textContent = gs.totalCoins.toLocaleString();
-                document.getElementById('board-owned').textContent = 'Owned: ' + gs.inventory.board;
-                document.getElementById('magnet-owned').textContent = 'Owned: ' + gs.inventory.magnet;
-
-                // Disable buttons if not enough coins
-                document.getElementById('buy-board').disabled = gs.totalCoins < 100;
-                document.getElementById('buy-magnet').disabled = gs.totalCoins < 50;
-            }
-        }
-
-        // ===== SECTION 10: UI MANAGER =====
-        class UIManager {
-            constructor(game) {
-                this.game = game;
-                this.setupEventListeners();
+                document.getElementById('cur-coins').textContent = gs.totalCoins.toLocaleString();
+                document.getElementById('shop-coin-count').textContent = gs.totalCoins.toLocaleString();
             }
 
-            setupEventListeners() {
-                document.getElementById('play-button').addEventListener('click', () => {
-                    this.game.startGame();
-                });
+            renderLeaderboard() {
+                const list = document.getElementById('lb-list');
+                const hs = this.game.gameState.highScore;
+                let entries = this.lbNames.map((n, i) => ({ name: n, score: Math.max(100, Math.floor(Math.random() * 5000 + 500)), avatar: ['😎', '🤠', '👩‍🎤', '🧑‍💻', '👨‍🚀', '🦸', '🧝', '🧑‍🎨', '👻', '🤖'][i] }));
+                entries.push({ name: 'You', score: hs, avatar: '🏃', me: true });
+                entries.sort((a, b) => b.score - a.score);
+                list.innerHTML = entries.map((e, i) => {
+                    const rc = i === 0 ? '' : i === 1 ? ' silver' : i === 2 ? ' bronze' : ' normal';
+                    return `<div class="lb-entry${e.me ? ' me' : ''}"><div class="lb-rank${rc}">${i + 1}</div><div class="lb-avatar">${e.avatar}</div><div class="lb-info"><div class="lb-name">${e.name}</div><div class="lb-score">${e.me ? 'Your best' : 'Weekly'}</div></div><div class="lb-pts">${e.score.toLocaleString()}</div></div>`;
+                }).join('');
+            }
 
-                document.getElementById('pause-button').addEventListener('click', () => {
-                    this.game.togglePause();
+            renderCharacters() {
+                const cg = document.getElementById('char-grid');
+                cg.innerHTML = this.characters.map(c => `<div class="char-card${c.id === this.selectedChar ? ' selected' : ''}${!c.unlocked ? ' locked' : ''}" data-char="${c.id}">${c.icon}<div class="card-label">${c.name}</div>${!c.unlocked ? '<div class="card-lock">🔒</div>' : ''}</div>`).join('');
+                cg.querySelectorAll('.char-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const ch = this.characters.find(c => c.id === card.dataset.char);
+                        if (!ch || !ch.unlocked) return;
+                        this.selectedChar = ch.id;
+                        localStorage.setItem('rfhChar', ch.id);
+                        document.getElementById('char-preview-icon').textContent = ch.icon;
+                        document.getElementById('char-preview-name').textContent = ch.name;
+                        cg.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                    });
                 });
-
-                document.getElementById('play-again-button').addEventListener('click', () => {
-                    this.game.startGame();
-                });
-
-                document.getElementById('menu-button').addEventListener('click', () => {
-                    this.game.showMainMenu();
+                const bg = document.getElementById('board-grid');
+                bg.innerHTML = this.boards.map(b => `<div class="char-card${b.id === this.selectedBoard ? ' selected' : ''}${!b.unlocked ? ' locked' : ''}" data-board="${b.id}">${b.icon}<div class="card-label">${b.name}</div>${!b.unlocked ? '<div class="card-lock">🔒</div>' : ''}</div>`).join('');
+                bg.querySelectorAll('.char-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const bd = this.boards.find(b => b.id === card.dataset.board);
+                        if (!bd || !bd.unlocked) return;
+                        this.selectedBoard = bd.id;
+                        localStorage.setItem('rfhBoard', bd.id);
+                        bg.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                    });
                 });
             }
 
+            renderShop() {
+                const gs = this.game.gameState;
+                const activeTab = document.querySelector('.shop-tab.active')?.dataset.shop || 'powerups';
+                const container = document.getElementById('shop-items');
+                this.updateCurrencyDisplay();
+                if (activeTab === 'mystery') {
+                    container.innerHTML = `<div class="mystery-box" id="shop-mystery"><div class="box-icon">🎁</div><div class="box-text">Mystery Box</div><div class="box-sub">50 coins — random power-up!</div></div>`;
+                    document.getElementById('shop-mystery').addEventListener('click', () => {
+                        if (gs.totalCoins >= 50) {
+                            gs.totalCoins -= 50;
+                            const items = ['board', 'magnet'];
+                            const item = items[Math.floor(Math.random() * items.length)];
+                            gs.inventory[item] = (gs.inventory[item] || 0) + 1;
+                            gs.saveTotalCoins(); gs.saveInventory();
+                            this.renderShop();
+                            document.getElementById('shop-mystery').querySelector('.box-text').textContent = `Won: ${item}!`;
+                        }
+                    });
+                    return;
+                }
+                container.innerHTML = this.shopItems.map(item => {
+                    const owned = gs.inventory[item.key] || 0;
+                    return `<div class="shop-item" id="shop-${item.id}"><div class="shop-item-icon">${item.icon}</div><div class="shop-item-info"><div class="shop-item-name">${item.name}</div><div class="shop-item-desc">${item.desc}</div><div class="shop-item-owned">Owned: ${owned}</div></div><button class="buy-btn ui-element" data-buy="${item.key}" data-cost="${item.cost}" ${gs.totalCoins < item.cost ? 'disabled' : ''}><span class="coin-icon"></span>${item.cost}</button></div>`;
+                }).join('');
+                container.querySelectorAll('.buy-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const ok = gs.buyItem(btn.dataset.buy, parseInt(btn.dataset.cost));
+                        if (ok) {
+                            this.renderShop();
+                            const el = btn.closest('.shop-item');
+                            el.classList.remove('purchase-flash'); void el.offsetWidth; el.classList.add('purchase-flash');
+                        }
+                    });
+                });
+            }
+
+            renderRewards() {
+                const grid = document.getElementById('reward-grid');
+                const streak = parseInt(localStorage.getItem('rfhStreak') || '0');
+                const lastClaim = localStorage.getItem('rfhLastClaim') || '';
+                const today = new Date().toDateString();
+                const claimed = lastClaim === today;
+                const icons = ['🪙', '🔑', '🪙', '⭐', '🛹', '🪙', '🎁'];
+                grid.innerHTML = Array.from({ length: 7 }, (_, i) => {
+                    let cls = i < streak ? 'claimed' : i === streak && !claimed ? 'today' : 'locked';
+                    return `<div class="reward-day ${cls}" data-day="${i}"><div class="rw-icon">${icons[i]}</div><div>Day ${i + 1}</div></div>`;
+                }).join('');
+                grid.querySelectorAll('.reward-day.today').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const rewards = [25, 1, 50, 5, 1, 100, 1];
+                        const r = rewards[streak % 7];
+                        this.game.gameState.totalCoins += r;
+                        this.game.gameState.saveTotalCoins();
+                        localStorage.setItem('rfhStreak', ((streak + 1) % 7).toString());
+                        localStorage.setItem('rfhLastClaim', today);
+                        this.updateCurrencyDisplay();
+                        this.renderRewards();
+                    });
+                });
+            }
+
+            renderMissions() {
+                const list = document.getElementById('mission-list');
+                list.innerHTML = this.missions.map(m => {
+                    const progress = parseInt(localStorage.getItem(m.key) || '0');
+                    const pct = Math.min(100, Math.floor(progress / m.target * 100));
+                    const done = progress >= m.target;
+                    return `<div class="mission-card"><div class="mission-top"><div class="mission-title">${m.icon} ${m.title}</div><div class="mission-reward">🪙 ${m.reward}</div></div><div class="mission-desc">${m.desc}</div><div class="progress-bar"><div class="progress-fill${done ? ' gold' : ''}" style="width:${pct}%"></div></div><div class="mission-progress-text">${done ? '✅ Complete!' : `${progress}/${m.target}`}</div></div>`;
+                }).join('');
+            }
+
+            // === Screen management (same API as old UIManager) ===
             showMainMenu() {
                 document.getElementById('main-menu').classList.remove('hidden');
                 document.getElementById('hud').classList.add('hidden');
                 document.getElementById('game-over-screen').style.display = 'none';
                 document.getElementById('pause-screen').style.display = 'none';
                 document.getElementById('touch-instructions').classList.add('hidden');
-                document.getElementById('store-overlay').style.display = 'none';
-
-                document.getElementById('menu-high-score').textContent =
-                    this.game.gameState.highScore.toLocaleString();
-                document.getElementById('menu-total-coins').textContent =
-                    this.game.gameState.totalCoins.toLocaleString();
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+                document.getElementById('menu-high-score').textContent = this.game.gameState.highScore.toLocaleString();
+                this.updateCurrencyDisplay();
             }
 
             showGame() {
@@ -1964,45 +3367,33 @@
                 document.getElementById('game-over-screen').style.display = 'none';
                 document.getElementById('pause-screen').style.display = 'none';
                 document.getElementById('touch-instructions').classList.remove('hidden');
-                document.getElementById('store-overlay').style.display = 'none';
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
             }
 
-            showPause() {
-                document.getElementById('pause-screen').style.display = 'flex';
-            }
-
-            hidePause() {
-                document.getElementById('pause-screen').style.display = 'none';
-            }
+            showPause() { document.getElementById('pause-screen').style.display = 'flex'; }
+            hidePause() { document.getElementById('pause-screen').style.display = 'none'; }
 
             showGameOver(isNewRecord) {
                 const screen = document.getElementById('game-over-screen');
                 screen.style.display = 'flex';
-
-                document.getElementById('final-score').textContent =
-                    this.game.gameState.score.toLocaleString();
-                document.getElementById('final-coins').textContent =
-                    this.game.gameState.coins.toLocaleString();
-                document.getElementById('final-distance').textContent =
-                    Math.floor(this.game.gameState.distance / 10) + 'm';
-
-                const highScoreEl = document.getElementById('game-over-high-score');
-                highScoreEl.textContent = this.game.gameState.highScore.toLocaleString();
-
-                if (isNewRecord) {
-                    highScoreEl.classList.add('new-record');
-                } else {
-                    highScoreEl.classList.remove('new-record');
-                }
+                document.getElementById('final-score').textContent = this.game.gameState.score.toLocaleString();
+                document.getElementById('final-coins').textContent = this.game.gameState.coins.toLocaleString();
+                document.getElementById('final-distance').textContent = Math.floor(this.game.gameState.distance / 10) + 'm';
+                const hse = document.getElementById('game-over-high-score');
+                hse.textContent = this.game.gameState.highScore.toLocaleString();
+                if (isNewRecord) hse.classList.add('new-record'); else hse.classList.remove('new-record');
+                // Update mission progress
+                const gs = this.game.gameState;
+                const prev = (k, v) => { const cur = parseInt(localStorage.getItem(k) || '0'); localStorage.setItem(k, Math.max(cur, v).toString()); };
+                prev('missionCoins', gs.coins);
+                prev('missionDist', Math.floor(gs.distance / 10));
+                prev('missionScore', gs.score);
             }
 
             updateHUD() {
-                document.getElementById('score-display').textContent =
-                    this.game.gameState.score.toLocaleString();
-                document.getElementById('coin-count').textContent =
-                    this.game.gameState.coins.toLocaleString();
-                document.getElementById('distance-counter').textContent =
-                    Math.floor(this.game.gameState.distance / 10) + 'm';
+                document.getElementById('score-display').textContent = this.game.gameState.score.toLocaleString();
+                document.getElementById('coin-count').textContent = this.game.gameState.coins.toLocaleString();
+                document.getElementById('distance-counter').textContent = Math.floor(this.game.gameState.distance / 10) + 'm';
             }
         }
 
@@ -2013,7 +3404,7 @@
                 this.setupRenderer();
 
                 this.gameState = new GameState();
-                this.ui = new UIManager(this);
+                this.ui = new MenuUI(this);
 
                 this.lastTime = 0;
                 this.accumulatedTime = 0;
@@ -2096,7 +3487,7 @@
                 this.obstacles = new ObstacleManager(this.scene);
                 this.coins = new CoinManager(this.scene);
                 this.input = new InputHandler(this);
-                this.store = new StoreManager(this);
+                // MenuUI handles all store/shop functionality
                 this.cityBackground = new CityBackground(this.scene);
 
                 // Start menu music on first user interaction (autoplay policy)
