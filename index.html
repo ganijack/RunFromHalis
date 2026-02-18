@@ -296,6 +296,139 @@
             padding: 10px;
         }
 
+        /* ===== PHOTO BANNER ===== */
+        .photo-banner-wrapper {
+            position: relative;
+            margin: 8px 0 4px;
+            padding: 4px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFE66D, #A29BFE, #FF6B6B);
+            background-size: 400% 400%;
+            animation: bannerGlow 4s ease infinite;
+            box-shadow: 0 0 25px rgba(255, 107, 107, 0.25), 0 0 50px rgba(78, 205, 196, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            max-width: 260px;
+            width: 55vw;
+        }
+
+        .photo-banner-wrapper:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 35px rgba(255, 107, 107, 0.4), 0 0 70px rgba(78, 205, 196, 0.25);
+        }
+
+        @keyframes bannerGlow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            25% {
+                background-position: 100% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            75% {
+                background-position: 0% 100%;
+            }
+        }
+
+        .photo-banner-inner {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(10, 10, 46, 0.9);
+        }
+
+        .photo-banner-inner img {
+            width: 100%;
+            height: auto;
+            max-height: 220px;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+            border-radius: 14px;
+            filter: brightness(1.05) contrast(1.05);
+            transition: filter 0.3s ease, transform 0.4s ease;
+        }
+
+        .photo-banner-wrapper:hover .photo-banner-inner img {
+            filter: brightness(1.15) contrast(1.1);
+            transform: scale(1.03);
+        }
+
+        .photo-banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 14px 10px;
+            background: linear-gradient(transparent, rgba(10, 10, 46, 0.95));
+        }
+
+        .photo-banner-tag {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.12);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+        }
+
+        .photo-banner-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Sparkle effect corners */
+        .photo-banner-wrapper::before,
+        .photo-banner-wrapper::after {
+            content: '✦';
+            position: absolute;
+            font-size: 14px;
+            color: #FFD700;
+            z-index: 2;
+            animation: sparkle 2s ease-in-out infinite;
+            text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+        }
+
+        .photo-banner-wrapper::before {
+            top: -6px;
+            right: -6px;
+            animation-delay: 0s;
+        }
+
+        .photo-banner-wrapper::after {
+            bottom: -6px;
+            left: -6px;
+            animation-delay: 1s;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8) rotate(0deg);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.2) rotate(180deg);
+            }
+        }
+
         #game-logo {
             font-size: clamp(36px, 10vw, 64px);
             font-weight: 900;
@@ -1707,6 +1840,16 @@
             <!-- Center -->
             <div class="menu-center">
                 <div id="game-logo">RUN FROM<br>HALIS</div>
+                <!-- Photo Banner -->
+                <div class="photo-banner-wrapper ui-element">
+                    <div class="photo-banner-inner">
+                        <img src="assets/banner.jpg" alt="Halis">
+                        <div class="photo-banner-overlay">
+                            <div class="photo-banner-tag">⭐ WANTED</div>
+                            <div class="photo-banner-name">HALIS</div>
+                        </div>
+                    </div>
+                </div>
                 <div id="high-score-display">🏆 HIGH SCORE: <span id="menu-high-score">0</span></div>
                 <button id="play-button" class="ui-element">TAP TO PLAY</button>
                 <div class="action-row">
@@ -2314,6 +2457,7 @@
                 this.isJumping = false;
                 this.isSliding = false;
                 this.isChangingLane = false;
+                this.laneChangeTime = 0;
 
                 this.animationTime = 0;
 
@@ -2410,7 +2554,12 @@
                 this.animationTime += deltaTime;
                 this.z = currentZ; // Sync with track position
 
-                // Handle state transitions
+                // Always process lane changes independently of jump/slide state
+                if (this.isChangingLane) {
+                    this.processLaneChange(deltaTime);
+                }
+
+                // Handle vertical state transitions (jump/slide/run)
                 switch (this.state) {
                     case 'RUNNING':
                         this.updateRunning(deltaTime);
@@ -2420,9 +2569,6 @@
                         break;
                     case 'SLIDING':
                         this.updateSliding(deltaTime);
-                        break;
-                    case 'LANE_CHANGE':
-                        this.updateLaneChange(deltaTime);
                         break;
                 }
 
@@ -2497,17 +2643,19 @@
                 this.rightLeg.rotation.x = -0.2;
             }
 
-            updateLaneChange(deltaTime) {
-                if (this.stateTime >= CONFIG.LANE_CHANGE_DURATION / 1000) {
-                    this.state = 'RUNNING';
+            processLaneChange(deltaTime) {
+                this.laneChangeTime += deltaTime;
+
+                if (this.laneChangeTime >= CONFIG.LANE_CHANGE_DURATION / 1000) {
                     this.lane = this.targetLane;
                     this.x = this.targetX;
                     this.isChangingLane = false;
-                    this.stateTime = 0;
+                    this.laneChangeTime = 0;
+                    this.group.rotation.z = 0;
                     return;
                 }
 
-                const progress = this.stateTime / (CONFIG.LANE_CHANGE_DURATION / 1000);
+                const progress = this.laneChangeTime / (CONFIG.LANE_CHANGE_DURATION / 1000);
                 const easedProgress = easeOutCubic(progress);
 
                 const startX = CONFIG.LANE_POSITIONS[this.lane];
@@ -2523,8 +2671,7 @@
 
                 this.targetLane = this.lane - 1;
                 this.targetX = CONFIG.LANE_POSITIONS[this.targetLane];
-                this.state = 'LANE_CHANGE';
-                this.stateTime = 0;
+                this.laneChangeTime = 0;
                 this.isChangingLane = true;
             }
 
@@ -2533,8 +2680,7 @@
 
                 this.targetLane = this.lane + 1;
                 this.targetX = CONFIG.LANE_POSITIONS[this.targetLane];
-                this.state = 'LANE_CHANGE';
-                this.stateTime = 0;
+                this.laneChangeTime = 0;
                 this.isChangingLane = true;
             }
 
@@ -2585,6 +2731,7 @@
                 this.isJumping = false;
                 this.isSliding = false;
                 this.isChangingLane = false;
+                this.laneChangeTime = 0;
                 this.group.scale.y = 1;
                 this.group.rotation.z = 0;
                 this.torso.rotation.x = 0;
